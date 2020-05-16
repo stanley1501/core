@@ -357,7 +357,7 @@ export default class Application {
         // the details property is decoded to transform escaped characters such as '\n'
         const formattedError = error.response && Array.isArray(error.response.errors) && error.response.errors.map((e) => decodeURI(e.detail));
 
-        error.alertProps = {
+        error.alertAttrs = {
           type: 'error',
           children,
           controls: isDebug && [
@@ -381,7 +381,7 @@ export default class Application {
             console.groupEnd();
           }
 
-          error.alertKey = this.alerts.show(error.alertProps);
+          error.alertKey = this.alerts.show(error.alertAttrs);
         }
 
         deferred.reject(error);
