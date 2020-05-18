@@ -396,7 +396,7 @@ export default class Application {
    * @param {string[]} [formattedError]
    * @private
    */
-  showDebug(error) {
+  showDebug(error, formattedError) {
     this.alerts.dismiss(this.requestError.alertKey);
 
     this.modal.show(new RequestErrorModal({ error, formattedError }));
