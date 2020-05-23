@@ -23,6 +23,7 @@ import Notification from './models/Notification';
 import { flattenDeep } from 'lodash-es';
 import PageState from './states/PageState';
 import AlertManagerState from './states/AlertManagerState';
+import AlertState from './states/AlertState';
 
 /**
  * The `App` class provides a container for an application, as well as various
@@ -313,7 +314,7 @@ export default class Application {
       }
     };
 
-    if (this.requestError) this.alerts.dismiss(this.requestError.alertKey);
+    if (this.requestError) this.alerts.dismiss(this.requestError.alert.key);
 
     // Now make the request. If it's a failure, inspect the error that was
     // returned and show an alert containing its contents.
@@ -357,7 +358,7 @@ export default class Application {
         // the details property is decoded to transform escaped characters such as '\n'
         const formattedError = error.response && Array.isArray(error.response.errors) && error.response.errors.map((e) => decodeURI(e.detail));
 
-        error.alertAttrs = {
+        error.alert = new AlertState({
           type: 'error',
           children,
           controls: isDebug && [
@@ -365,7 +366,7 @@ export default class Application {
               Debug
             </Button>,
           ],
-        };
+        });
 
         try {
           options.errorHandler(error);
@@ -381,7 +382,7 @@ export default class Application {
             console.groupEnd();
           }
 
-          error.alertKey = this.alerts.show(error.alertAttrs);
+          this.alerts.show(error.alert);
         }
 
         deferred.reject(error);
@@ -397,7 +398,7 @@ export default class Application {
    * @private
    */
   showDebug(error, formattedError) {
-    this.alerts.dismiss(this.requestError.alertKey);
+    this.alerts.dismiss(this.requestError.alert.key);
 
     this.modal.show(new RequestErrorModal({ error, formattedError }));
   }
